@@ -1,0 +1,21 @@
+= Other notes =
+
+* Scientific cookie cutter scientific projects
+* pyMC3 - probabilistic programming. useful for Bayesian distributions and
+  statistical inference. http://github.com/pymyc-devs/pymc3
+* xarray - "numpy with labels", or "N-dimensional dataframes"
+* Altair viz library. Has interacitve filtering that will change other plots.
+  Less flashy then other viz libraries
+* Plotly - viz library wrapper on top of d3. plotly.js lets you create JS
+  graphs. plotly.py is full python.
+  * Dash is a flask-based, react-front-end for creating dashboards. Could
+    feasibly put gunicorn in front to spin up your own dashboards.
+    
+* Pandas birds-of-a-feather: Pandas 0.24 to start deprecating stuff in prep
+for 1.0. 
+  * Panels
+  * .ix indexing
+  * something else I forgot
+
+* 0.25 to 1.0 should be pretty seamless. 0.24 will have all the deprecation
+  warnings

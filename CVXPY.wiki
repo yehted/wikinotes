@@ -1,0 +1,8 @@
+= CVXPY =
+CVXPY is a modeling framework for running convex optimization solvers
+
+use cases in finance, machine learning, control
+CVXPortfolio
+
+http://cvxpy.org
+http://github.com/cvxpy

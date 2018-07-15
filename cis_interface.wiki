@@ -1,0 +1,11 @@
+= cis_interface =
+
+https://github.com/cropsinsilico/cis_interface
+
+glue for running scripts that feed into each other, esp written 
+in different languages.
+
+Specify in yaml files declaration of inputs and outputs (instead of csv files)
+and can glue models together.
+
+Might be useful where processes are chained together with input/output files

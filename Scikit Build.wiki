@@ -1,0 +1,4 @@
+= Scikit Build = 
+Link to slides: bit.ly/scikit-build-talk 
+
+Build system for including c extensions

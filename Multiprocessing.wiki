@@ -1,0 +1,14 @@
+= Intel multiprocessing talk =
+http://github.com/IntelPython/composability_bench
+
+tbb4py and smp packages
+monkey patch std lib packages
+
+pythonic-ish implementation that augments the way we use multithreading and multiprocessing
+
+python -m smp my_script.py speeds up the *nested* multiprocessing
+
+when you have something like multiprocessing.Pool 
+and numpy functions (which are also multithreaded)
+
+p.map(np.linalg.qr, [iterable])

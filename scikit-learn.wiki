@@ -1,0 +1,7 @@
+= scikit-learn make_pipeline =
+Functional(ish) way to string together pipeline of scikit-learn operations
+
+Mostly to bridge the gap between scikit-learn (which operates best on numeric
+numpy ndarrays)
+
+Some support for dataframes. (categorical fields)

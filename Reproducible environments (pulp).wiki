@@ -1,0 +1,10 @@
+= Pulp =
+Pulp is "free artifactory"
+Also, it does python package management better (PyPI, pronounced pie-P-I, not
+pie-pie)
+no support for conda packages yet
+
+http://pulpproject.org
+
+http://bit.ly/2LgqFFq
+

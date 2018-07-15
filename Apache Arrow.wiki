@@ -1,0 +1,13 @@
+= Apache Arrow =
+http://ursalabs.org
+Wes McKinney (creator of pandas)
+
+Open source project to standardize in-memory columnar data. Split:
+* Front end
+* Calculation layer
+* In-memory layout
+* I/O
+
+Currently in-memory part is finished. 
+Fletcher is a project that uses pyArrow under the hood along with pandas
+extension arrays to manage non-numeric arrays

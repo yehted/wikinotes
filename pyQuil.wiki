@@ -1,0 +1,14 @@
+= PyQuil =
+
+Quantum hybrid computing
+
+Rigetti in berkeley has quantum computer
+
+pyquil is the python api
+
+can learn to program quantum computer in virtual machine, or on a connection to
+the actual quantum computer
+
+
+http://go.rigetti.com/quantum-dice
+http://pyquil.readthedocs.io

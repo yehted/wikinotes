@@ -1,0 +1,7 @@
+= Vaex =
+
+https://github.com/maartenbreddels/vaex
+
+Super fast dataframes for huge data
+Compare with dask, which also attempts to manage dataframes that are too large
+to fit in memory

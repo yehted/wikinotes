@@ -1,0 +1,15 @@
+= Binder =
+http://bit.ly/scipy-2018-binder
+
+Reproducible jupyter environments
+
+Binderhub:
+* generates docker containers from github repor using repo2docker
+* generates jupyterhub sessions by using kubernetes
+* connects user to notebook
+
+jupyterhub + kubernetes = kubespawner
+
+http://mybinder.org is open source hosted service for binder
+http://binderhub.readthedocs.io
+http://z2jh.jupyter.org
