@@ -1,0 +1,50 @@
+= Discovering RESTful Web Microservices =
+== Mike Amundsen ==
+== GOTO Chicago 2019, Monday 4:20 pm ==
+
+http://training.amundsen.com
+http://g.mamund.com/msabook - Free book (Microservice Architecture)
+also wrote "Continuous API Management"
+
+== Discovering ==
+Need to move on writing bespoke everything
+That means it doesn't scale
+Your API is more valuable when it's connected to another API. "Network effect"
+"Maps" are useful for discovering API
+
+for example, Swagger is a map on how to use an API. Now we use it to *define*
+an API.
+The challenge though, is that swagger is just for *one* API. Which means it's
+totally isolated. We don't have a general map, only specific maps.
+
+What maps a good map?
+It has legends. A universal way of talking about things
+Maps don't tell you how to get there, just where things are.
+
+== RESTful Web Microservices? ==
+Roy Fielding is (in)famous for creating REST. REST emphasizes scalability of
+component interactions, generatlity of interfaces, independent deployment of
+compnents, and intermediaery components.
+
+Microservices - "An approach to developing a single application as a suite of
+small services, each running in its own process..." - Martin Fowler
+
+== Microservice Characteristics ==
+(Also the principles of Unix - 1978)
+- Make each program do one thing well
+- Expect the output of every program to be the input of another program/service
+- Design and build software to be tried early
+- Use tools to lighten the programming task
+
+"Loosely coupled components running in an engineered system"
+
+== Fallacies of Distributed Computing (L Peter Deutsch) ==
+1. The network is reliable
+2. Latency is zero
+3. Bandwidth is infinite
+4. The network is secure
+5. Topology doesn't change
+6. There is one administrator
+7. Transport cost is zero
+8. The network is homogeneous
+

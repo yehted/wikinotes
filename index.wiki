@@ -16,3 +16,4 @@
     * [[Reactive Spring]]
     * [[Asynchronous Microservices]]
     * [[Serverless]]
+    * [[RESTful Microservices]]
