@@ -12,3 +12,7 @@
     * [[Kubeflow]]
     * [[scikit-learn]]
     * [[Other]]
+= GOTO Chicago 2019 =
+    * [[Reactive Spring]]
+    * [[Asynchronous Microservices]]
+    *

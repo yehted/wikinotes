@@ -1,0 +1,232 @@
+# Asynchronous Microservices #
+## Chris Richardson ##
+
+## Goals of the talk ##
+Microservices > REST
+Microservices > Events
+Microservices != Event Sourcing
+Apache Kafka != Event Store
+
+Created cloudsource, which got acquired by spring something, which got acquired by vmware
+Startup: eventuate.io
+Book: Mircoservices Patterns
+40% off discount: http://bit.ly/gotochgo2019-microservices
+
+## Agenda ##
+* Transactions, queries, and microservies
+* Managing transactrions with sagas
+* Implementing queries with CQRS
+* Implementing transactional ...
+
+Service = indepently deplyable component. Has the following 4 components
+1. API:
+    Operations -> Commands (mutate data), Queries (retrieve data)
+    - Can be synchronous REST/gRPC
+    - But can also use asynchronous messaging
+
+2. Events -> Things that happened (Event Publisher)
+
+3. API Client
+
+4. Event Subscriber
+
+Why Microservices? CI/CD, also small autonomous teamsd
+
+If you had a REST API, you might have a Customer service and Order service.
+Each service also has its own database.
+You might have an API gateway infront of both to route to the correct service.
+
+But things can get hairy if, for example, the order service needs to hit the
+customer service to find a customer's credit limit.
+
+In a monolith, you could enforce [[ACID]] transaction through SQL transaction. But
+in microservices, the tables are private to the services, so you can't
+implement transactions (without 2phase commit, etc, which is not in fashion).
+
+In monolith, trivial to do a join between two tables. But can't do something
+like this in microservices.
+
+Transaction management and querying is no longer straightforward (when they
+need to span services).
+
+## Transactions ##
+Saga pattern. A "long running transaction", in a sense.
+You break up the transaction into a series of local transactions in their
+respective services.
+In this example, createOrder() initiates the saga. Creates order in
+state=PENDING. Customer service calls reserveCredit(), then approveOrder() back
+in the order service, which then the state=CREATED.
+
+Challenges: Sagas are asynchronous, but are initiated by a synchronous request
+(e.g. HTTP POST)
+Also, what about rollbacks? If 5th step of saga fails, you have to explicitly
+undo the changes in the first 4 steps.
+And, they're not ACID. They're ACD. (I = independent?) Opens up the
+possibilities of lost updates or fuzzy reads. Have to use countermeasures like
+semantic locks (e.g. PENDING) to keep this from happening.
+
+
+## How do the saga participants communicate? ##
+REST is bad, because there's temporal coupling. The client and service have to
+be up simultaneously for the request/response cycle to complete
+Could use retries, provided it's idempotent. But challenges here.
+
+Therefore, it makes much more sense for sagas to be implemented using
+asynchronous messaging. Using at least once guarantted delivery. Even if one
+participant is temporarily unavailable, the message broker will retry until it
+completes.
+Message broker should have ordered delivery
+Mechanism for scaling consumers that preserves ordering, e.g.
+- Kafka consumer group
+- ActiveMQ message group
+
+Service executes transaction that updates database, and then also publishes
+message/event to the message broker. But also question about how to make those
+two things atomic?
+
+How to sequence the saga transactions? After the completion of T1, something
+must decide what step to execute next.
+
+## Choreography vs Orchestration ##
+choreography is distributed, orchestration is centralized
+
+Choreography is event based, which is why people sometimes thing microservices
+as event driven.
+Order service created orderCreated event, the customer service subscribes to
+that channel, tres to reserve Credit, and publishes creditReserved or
+creditLimitExceeded.
+
+Kafka, JMS Message queue, JMS topic, etc. Not necessarily just Kafka.
+
+Order service hears the credit message, and then approve/reject.
+A bit more natural and intuitive.
+
+Pros:
+- Simple, when using event sourcing
+- Participants are loosely coupled
+
+Cons:
+- Decentralized implementation, difficult to understand
+- Cyclic dependencies - services listen to each other's events.
+- Overloads domain objects, e.g. order and customer *know* too much
+- Events = indirect way to make something happen
+- passive/agressive, because sometimes you just want to TELL a service to do
+  something
+
+
+## Orchestration ##
+There is a centralized coordinator what to do. Invoking them, not with REST,
+but with async request/response. Send command message (do this), and the
+participant replies. A saga is a persistent object that implements a state
+machine and invokes participants.
+
+On create:
+- Invokes a saga participant
+- Persists in database
+- wait for reply
+
+On reply:
+- Load state from database
+- determine which saga participant to invoke next
+- invokes
+- updates state,
+- etc.
+
+Kind of like a "workflow engine"?
+Sagas are supposed to be short lived. Should last tens of milliseconds. Kind of
+like a distributed transaction, but with async messaging.
+
+Order services cerates CreateOrderSaga, persists to database, which creates the
+order. Then sends message to customer command channel to reserveCredit
+(important: request/reply, not pub/sub or domain events "ive done this"). Customer
+service will reply on saga reply channel "credit reserved",
+
+https://github.com/eventuate-tram/eventuate-tram-sagas-examples
+
+Pros:
+- Centralized coordination logic is easier to understand
+- reduces coupling - customer service knows less
+- reduces cyclic dependencies
+
+Cons:
+- Risk of smart sagas direecting dumb services (business logic in the saga
+  classes and dumb services performing crud. business logic should be in
+  services, where it belongs)
+
+## API Composition pattern ##
+API Gateway composes queries, and is the default way to do it.
+There can be queries that are trivial in monolith, but not that easy in
+microservices.
+1 + N strategy, in memory join. Slipperly slope of building distributed query
+engine. There are many other examples where this doesn't work.
+
+Instead, use CQRS (Command Query Request Segregation).
+Maintain a copy of your data in a format that can be easily queried.
+That replica is kept up to date by subscribing to the events that are created
+from the services that own the data.
+
+MongoDB is cool for this because you can create entries that contain both
+orders and customers because the query has both.
+
+Command side data model and query side data model are separate. Can even use
+different database for different queries. Each is optimized for query or types
+of queries.
+
+CQRS views are disposable. If you need to change the schema, can throw away and
+rebuild from scratch.
+
+But there is a downside: replication lag. Lag between when the event is
+created and when it's available in the view. Risk of showing stale data to
+user.
+Either:
+- Update UI/client side model without querying
+- use updated aggregate version to "wait" for query view to be updated
+
+## Implementing transactional messaging ##
+Messaging must also be transactional (along with updating database)
+
+Publish to message broker first?
+- Guarantees atomicity
+BUT
+- service can't read its own writes
+- difficult to write business logic
+
+Event sourcing!
+Event scentric approach to business logic
+Persist an object as a sequence of events.
+Events are source of truth, capturing the stae of your orders.
+
+Business logic is all in terms of generating events. To recreate in memory of
+the state of the order, the system will load the events and replay them on the
+domain object.
+
+Key requirement of event store is that you load events by ID.
+But kakfa is NOT an event store, because it doesn't let you retrieve by ID.
+
+Event sourcing is not the only way of publishing events! But it makes auditing
+easier. What is the state of this objecty 2 weeks ago? But different way of
+programming. Potentially long lived events, and challenges around schema
+migration. And it forces you to use CQRS.
+
+Implementing choreography sagas is easy, but orchestration based sagas is more
+challenging.
+
+Option: Using transactional outbox pattern.
+https://microservices.io/patterns/data/transactional-outbox.html
+https://eventuate.io/
+
+Database has outbox table, and then you tail transation log table.
+Or, you could poll the message table. Every n seconds, poll, then publish
+messages.
+
+Transactional messaging is the technical foundation for making all this work.
+
+Summary:
+- Use async messaging to solve dstributed data management problems.
+- Services publish events to implement
+-   choreography based sagas
+-   queries using CQRS views
+- Services send command/reply message to implement orchestration-based sagas
+- Services must atomically update datate and send messages
+-   Event sourcing
+-   Transactional outboxing
