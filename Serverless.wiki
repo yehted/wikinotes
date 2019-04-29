@@ -1,0 +1,115 @@
+= Serverless is the Abstraction We Deserve =
+== GOTO Chicago 2019 3:10PM ==
+== Jesse Butler ==
+
+Just another abstraction?
+Abstraction enables powerful solutions
+Abstraction lowers the barrier to entry
+
+== Goals ==
+- Serverless as both Architecture and Platform
+- Primary benefits of serverless
+- Break down friction
+
+In cloud computing, monolithic applications are antipattern. Not necessarily
+bad, but it's harder to get things out the door quickly.
+
+Evolved from baremetal to virtual machines to containers. Now, to functions.
+i.e., give us code, and we'll run it for you
+
+-> Came from a need to get features out faster
+
+Microservices - deploying code to systems we build in the cloud
+Serverless = "deploying services to the cloud"
+
+What can we build we with serverless?
+- Web and mobile backends
+- Any other backend API implementations
+- real time processing of files, streams
+- batch processing
+- gluing up SaaS things
+
+== Serverless as a Platform ==
+event sources, triggers, function execution, backend services
+An architecture which depends on a certain kind of platform.
+
+== Serverless is a spectrum ==
+1. on one end, kubernetes, nomad, swarm on vms that you procure. Full control
+2. moving to the right, container services - give me a container, and you run the container
+3. then DIY FaaS (function as a service)
+4. Managed serverless - aws lambda, azure functions, etc. Fully managed platform
+for hosting
+
+== Don't Conflate Requirements with Complexity Aversion ==
+"The notion thatserverless is less complex than running your own services..."
+@jlb13 23-4-2019
+
+== What is serverless? ==
+- Event driven architecture
+- Invisible infrastructure
+- Automatic scaling on demand
+- Granular billing for execution time
+- Fault tolerant and highly available
+
+Opinion: Serverless really is just the managed serverless
+
+== What serverless is not ==
+- It is not magic
+- Brownfield: Need to break down the monolith apart regardless
+- Greenfield: You need a solid design and to truly understand the platform
+- Nothing is free
+
+One big dependency.
+To embrace serverless, we have to give up some of that control
+The cloud is one big abstraction.
+"There is no cloud, it's just someone else's computer"
+
+== Containers ==
+- Containers are not complicated
+- Docker solves many problems with containers elegantly
+- But containers are ultimately an implementation detail
+
+== Kubernetes ==
+- Has great abstractions
+- Kuberenetes is an elegant, extensible solution for running containers at
+  scale.
+- At the end of the day, it's a platform.
+
+If you're starting a greenfield project, serverless just makes sense.
+
+== On to Functions ==
+- Ideally, small, easy to reason about
+- Idempotent
+- Implemented to work together
+
+== Big ideas ==
+- Start small and compose solutions
+- Don't own what you don't have to
+- Plan ahead fo observability
+- ???
+
+- Better to proliferate than to decompensate
+- Observability and triage become infinitely easier at the boundaries
+- Simplify your application estate
+- Events can and probably should define application boundaries
+- Share libraries between functions and applications, not execution context
+
+== Challenges ==
+- How do we bring our current solutions into serverless?
+- CI/CD, configuration management, ovservability are all table stakes
+- This isn't as hard as it seems, if we embrace the abstraction
+
+== Vendor Lock-in ==
+This is a real thing
+Don't think about lock-in, but rather the cost of migration.
+
+== Multi cloud ==
+Drop the notion of running an application across cloud platforms. Use the best
+in class something. Think about what you want to deploy and what you want to
+build
+
+Serverless is not necessarily sinmpler. Typically it's not.
+It doesn't mean less complexity, it may mean more. Serverless means an
+opportunity to focus you complexity where it matters.
+Solving for business problems is almost always better than solving for stack
+problems.

@@ -1,7 +1,7 @@
-# Asynchronous Microservices #
-## Chris Richardson ##
+= Asynchronous Microservices =
+== Chris Richardson ==
 
-## Goals of the talk ##
+== Goals of the talk ==
 Microservices > REST
 Microservices > Events
 Microservices != Event Sourcing
@@ -12,7 +12,7 @@ Startup: eventuate.io
 Book: Mircoservices Patterns
 40% off discount: http://bit.ly/gotochgo2019-microservices
 
-## Agenda ##
+== Agenda ==
 * Transactions, queries, and microservies
 * Managing transactrions with sagas
 * Implementing queries with CQRS
@@ -23,14 +23,11 @@ Service = indepently deplyable component. Has the following 4 components
     Operations -> Commands (mutate data), Queries (retrieve data)
     - Can be synchronous REST/gRPC
     - But can also use asynchronous messaging
-
 2. Events -> Things that happened (Event Publisher)
-
 3. API Client
-
 4. Event Subscriber
 
-Why Microservices? CI/CD, also small autonomous teamsd
+Why Microservices? CI/CD, also small autonomous teams
 
 If you had a REST API, you might have a Customer service and Order service.
 Each service also has its own database.
@@ -39,7 +36,7 @@ You might have an API gateway infront of both to route to the correct service.
 But things can get hairy if, for example, the order service needs to hit the
 customer service to find a customer's credit limit.
 
-In a monolith, you could enforce [[ACID]] transaction through SQL transaction. But
+In a monolith, you could enforce ACID transaction through SQL transaction. But
 in microservices, the tables are private to the services, so you can't
 implement transactions (without 2phase commit, etc, which is not in fashion).
 
@@ -49,7 +46,7 @@ like this in microservices.
 Transaction management and querying is no longer straightforward (when they
 need to span services).
 
-## Transactions ##
+== Transactions ==
 Saga pattern. A "long running transaction", in a sense.
 You break up the transaction into a series of local transactions in their
 respective services.
@@ -66,7 +63,7 @@ possibilities of lost updates or fuzzy reads. Have to use countermeasures like
 semantic locks (e.g. PENDING) to keep this from happening.
 
 
-## How do the saga participants communicate? ##
+== How do the saga participants communicate? ==
 REST is bad, because there's temporal coupling. The client and service have to
 be up simultaneously for the request/response cycle to complete
 Could use retries, provided it's idempotent. But challenges here.
@@ -87,7 +84,7 @@ two things atomic?
 How to sequence the saga transactions? After the completion of T1, something
 must decide what step to execute next.
 
-## Choreography vs Orchestration ##
+== Choreography vs Orchestration ==
 choreography is distributed, orchestration is centralized
 
 Choreography is event based, which is why people sometimes thing microservices
@@ -114,7 +111,7 @@ Cons:
   something
 
 
-## Orchestration ##
+== Orchestration ==
 There is a centralized coordinator what to do. Invoking them, not with REST,
 but with async request/response. Send command message (do this), and the
 participant replies. A saga is a persistent object that implements a state
@@ -153,7 +150,7 @@ Cons:
   classes and dumb services performing crud. business logic should be in
   services, where it belongs)
 
-## API Composition pattern ##
+== API Composition pattern ==
 API Gateway composes queries, and is the default way to do it.
 There can be queries that are trivial in monolith, but not that easy in
 microservices.
@@ -182,7 +179,7 @@ Either:
 - Update UI/client side model without querying
 - use updated aggregate version to "wait" for query view to be updated
 
-## Implementing transactional messaging ##
+== Implementing transactional messaging ==
 Messaging must also be transactional (along with updating database)
 
 Publish to message broker first?

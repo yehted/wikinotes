@@ -1,9 +1,9 @@
-# Josh Long #
-# Reactive Spring #
+= Josh Long =
+= Reactive Spring =
 
-# GOTO Chicago Apr 29, 10:20 AM
+= GOTO Chicago Apr 29, 10:20 AM =
 
-## Links  and Self Plug ##
+== Links and Self Plug ==
 github.com/joshlong/reactive-revolution
 O'reilly cloud native java book
 reactivespringbook.io
@@ -19,7 +19,7 @@ How about async I/O - provide a callback and get off that thread so that the
 thread can go do something else.
 ** IF what you're doing is I/O bound **
 
- ## Reactive stream specification ##
+ == Reactive stream specification ==
 Project reactor, rxjava2, akka streams sit on top of this reactive stream
 specification
 
@@ -62,7 +62,7 @@ functional and you can programatticaly add endpoints.
 But what about SQL databases?
 Answer, up until now, has not been great. JDBC is blocking and synchronous.
 
-## R2DBC ##
+== R2DBC ==
 Supports: postgresql, mssql, spi, and 3rd party mysql for now
 it's not yet GA. Cautious -
 *Later this year should be GA*
