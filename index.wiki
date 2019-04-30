@@ -20,3 +20,4 @@
     * [[AI Keynote]]
     * [[Serverless 2.0]]
     * [[Kubernetes Operational Tooling]]
+    * [[Dissecting the stdlib]]

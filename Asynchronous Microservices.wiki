@@ -1,5 +1,6 @@
 = Asynchronous Microservices =
 == Chris Richardson ==
+== GOTO Chicago 2019 ==
 
 == Goals of the talk ==
 Microservices > REST
@@ -7,7 +8,7 @@ Microservices > Events
 Microservices != Event Sourcing
 Apache Kafka != Event Store
 
-Created cloudsource, which got acquired by spring something, which got acquired by vmware
+Created cloudsource, which got acquired by spring source, which got acquired by vmware
 Startup: eventuate.io
 Book: Mircoservices Patterns
 40% off discount: http://bit.ly/gotochgo2019-microservices
@@ -23,9 +24,9 @@ Service = indepently deplyable component. Has the following 4 components
     Operations -> Commands (mutate data), Queries (retrieve data)
     - Can be synchronous REST/gRPC
     - But can also use asynchronous messaging
-2. Events -> Things that happened (Event Publisher)
+2. Event Publisher -> Produces events
 3. API Client
-4. Event Subscriber
+4. Event Subscriber -> Receive things that happened (Events)
 
 Why Microservices? CI/CD, also small autonomous teams
 
