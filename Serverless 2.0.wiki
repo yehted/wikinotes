@@ -1,0 +1,85 @@
+= Serverless 2.0 =
+== Alex Ellis ==
+== GOTO Chicago 2019 ==
+== Tuesday, Apr 30 10:20 AM ==
+
+What is Serverless 2.0?
+- Making sense of the landscape
+- *Portable serverless with Kubernetes*
+- Live demo
+
+Everyone's showing the gartner hype cycle graph...
+
+== Serverless 1.0 ==
+Sign up for AWS lambda
+write code with their signature
+package code in zip file
+
+And if you don't use AWS or GCP, there's no solution for you, esp enterprise
+developers.
+
+Something's not right here...
+
+Top two pain points:
+Lack of *portability* and *control*
+
+Developer pain points:
+- lack of debugging and tracing
+- lack of skills
+- lack of tools
+
+Claims:
+* only functions
+* infinite capacity/scale
+* zero cost at rest
+* sub-second billing
+* no-ops (but we've just heard there's not enough tooling and it's hard to use)
+
+All these descriptors are just a SaaS
+But it's really serverless as a product from a vendor
+
+== Serverless is an architectural pattern ==
+Monolith -> Microservice -> Function
+decreasing concern for infrastructure ->
+decreasing size/complexity ->
+
+== What are functions? ==
+- Short lived
+- Single purpose
+- No state
+- Auto-scaling
+
+This guy created OpenFaaS and is proselytizing
+== OpenFaaS ==
+`faas new --lang python3 uptime`
+`faas up` - generates a docker image, then saved to repository, then pushed
+onto platform
+
+OpenFaaS uses a secrets provider so you don't have to put secrets in
+environment variables
+
+*Now we have cloud native opportunity*
+
+== Serverless 2.0 ==
+Platform: Kubernetes
+Packaging: Docker image
+Workload: Node, python, etc function
+
+- HTTP/8080
+- Docker/OCI image
+- Stateless
+- Immutable
+
+== Comparison ==
+OpenFaaS (Community), Kubeless (Bitnami), Knative (google)
+
+OpenFaaS started as hack at DockerCon Nov 2016
+* Developers-first
+* Operationally simple
+* Community centric
+
+== Automated CI/CD (GitOps) ==
+Can put in webhooks into Git so that every time you push, it builds, pushes to
+registry, and deploys (if you want). Can also do blue-green type deployments
+
+_Showed live demo of service which runs a function everytime someone in the audience comments on a github issue_
