@@ -1,0 +1,118 @@
+= AI Keynote Talk =
+== Doug Lenat ==
+== GOTO Chicago 2019 ==
+== Tuesday, Apr 30 ==
+
+Two ways to power AI:
+- Statistics (machine learning, regression)
+- Logic (causal models)
+They have different strengths/weaknesses
+They can be harnessed to work together
+
+Left/Right brain AI analogy
+
+== Brittleness of Right-Brain AIs ==
+"Who was Prime Minister of the UK when Theresa May was born?"
+Won't get the answer
+
+== The Brittleness of Left-Brain AI ==
+Diagnosing a car with measles.
+
+*AI has veneer of intelligence, not intelligence*
+
+== The power of statistics ==
+* More is More
+* Low start-up cost
+
+== The power of logic ==
+* Transparency: step by step processing
+* 10,000 step long proofs are still valid
+
+Interesting examples of Cyc, and how it "reasons" about things using symbolic
+logic
+
+Mathcraft.ai can "abduce" why an algebra student made the mistakes he did
+Also game where you "teach" the avatar, instead of the avatar teaching you
+Or cournterterrorism by working backwards from catastrophe and trying to list
+things that might lead to it, to make it easier to look for.
+
+ML can benefit by partnering with symbolic AI if...
+- there is little/no data
+- showing a step by step justification is importnant
+- we want the top n answers, and pro/con arguments for each
+- multiple experts would disagree
+- the best experts are _much_ better than the average practitioner
+- the user _thinks_ they know what they want to ask, but there are several
+  iterations involved
+- the task involves real-wrld objects/actions/common sense
+
+== Brief story of Cyc ==
+- Both statistical ML and logic/rules models have been around for 50 years
+- Statistical ML was awaiting CPU speed, storage cost, torrents of training data,
+  convolution (waiting for technology to catch up with the algorithm)
+
+== Logic/symbolic models were awaiting ==
+- solutions to context, inconsistency, inefficiency
+- "priming the pump" so new apps weren't brittle
+
+CYC: Manhattan-like project effort because Congress intervened
+
+"upper model" contains:
+predicates
+collections (types)
+general concepts
+rules (axioms)
+
+represented in
+full 1st order logic
+higher order logic:
+- temporal logic
+- context logic
+- modal logic
+
+Inference engine:
+- general theorem prover
+- 1,100 special-case fast reasoners
+
+Interfaces:
+- Interactive NL dialogue
+- Automated KA
+-
+
+_It wouldn't fit in the suitcase because *it* was too big_
+_It wouldn't fit in the suitcase because *it* was too small_
+
+_Fred was mad at Tom because *he* stole *his* lunch_
+_Fred was mad at Tom so *he* stole *his* lunch_
+
+We develop this common sense by 3-4 years old
+
+Propositional Logic
+
+Knowledge graphs, triple-stores, quad stores, rdf+owl ontologies/owl lite,
+property graphs, etc
+
+Most symbolic logic ai have the assumption that if you try to prove something
+and fail, that assumption is false. but this is dangerous
+
+Tradeoff between efficiency and expressiveness.
+For example, we speak in natural language, which is very expressive, but not
+very efficient. By contrast, how do you express Romeo and Juliet in Java?
+
+There's not really anything that is both expressive and efficient. Even full
+first order logic is not expressive enough.
+
+So philosphers + computer scientists have tried to get both expressiveness and
+efficiency by:
+But we can separate epistemological and ___ languages
+
+== Ways to connect ML + KBS ==
+- Mutually agreed upon common API
+- KBS generates vast amount of training data for ML system
+- ML generates hypotheses -> KBS checks them for ill-formedness, then
+  contradiction (with existing knowledge) - reject the impossible ones
+  Even better: search for one ore more causal explanations of that hypothesis
+  Still better: causal explanations that make independently
+
+Causation: Understand the statistical result
+Correlation:

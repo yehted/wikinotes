@@ -2,6 +2,7 @@
 == Mike Amundsen ==
 == GOTO Chicago 2019, Monday 4:20 pm ==
 
+http://g.manumd.com/2019-04-goto-chicago
 http://training.amundsen.com
 http://g.mamund.com/msabook - Free book (Microservice Architecture)
 also wrote "Continuous API Management"
@@ -48,3 +49,15 @@ small services, each running in its own process..." - Martin Fowler
 7. Transport cost is zero
 8. The network is homogeneous
 
+Ted - This talk feels more like a sales pitch and a quoting other people/books.
+
+== Nygard Stability Patterns ==
+* Timeout
+* Circuit Breaker (if you don't reply, I mark your server as unresponsive, and
+  I do something else. Timed, and then I try again)
+* Bulkhead - run multiple at a time
+* Steady State - Makes sure that logs never run out of disk space, for example.
+  Steady state keeps thing up and running
+* Fail fast - "I can't do it in X time, b/c I couldn't do it anyways"
+* Handshaking - "I'm about to send a package, yes i'm read, i'm going to send
+  the hash, etc...". On the web, we have health checks
