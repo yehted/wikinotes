@@ -1,0 +1,133 @@
+= Dissecting the stdlib (kotlin) =
+== GOTO Chicago 2019 ==
+== Huyen Tue Dao ==
+
+== What is idiomatic kotlin? ==
+Look at the kotlin code that jetbrains wrote in their stdlib
+
+Collections - nice functional API for working with collections
+Functional: evaluate expressions > executing statements, focus on what, not how
+
+https://pragprog.com/book/vsjava8/functional-programming-in-java
+
+== Higher Order Functions ==
+First Order Citizens:
+
+1. Store functions in variables
+2. Pass functions as parameters to other functions
+3. Return functions from other functions
+
+=== Lambdas ===
+"a chunk of code curly braces"
+Usually, lambdas have no return types. Generally, they infer return types from
+the last evaluated statement. non-local `return` is not allowed in kotlin - return is for
+returning out of the enclosing function. You could, however, stick `lambda@`
+before the declaration, and you can then `return@lambda`
+
+=== Anonymous Functions ===
+They are declared like regular functions, but omit the function name. They do
+have a return type.
+*What would be an appropriate use case for an anonymous function?*
+
+Victoria Gonda youtube talks about kotlin
+"Kotlin Uncovered" and "Understand Every Line of Your Codebase"
+
+When you create a lambda, it is compiled into a class (in the bytecode). The
+logic is in the `invoke()` method, which is a static member of that class?
+
+When calling function, you can do `f(x)`, but you can also do `f.invoke(x)` if
+you want to be super specific
+
+if you have actual functions, kotlins will still let you pass them using
+`::functionName` as if it was a `val functionName = { ... }`
+
+apply, let, run, with -> lets you play with scope
+`apply` is for initialization
+`also` for side effects
+`run` for doing things
+
+"Two Stones, One Bird: Implementation Tradoffs" by Christina Lee
+
+Figuring out which is why and how they differ...
+1. Is it an extension?
+2. Does it return the reciver or a new value?
+3. Do you pass a lambda or a lambda with receiver?
+
+receiver is the "this" inside an extension function
+lambda: (T) -> Unit
+lambda with receiver: T.() -> Unit
+
+=== Extension functions ===
+Extend the functionality of classes without subclassing
+
+`fun String.removeDiacriticals(): String {`
+called as if it was a method of the String class
+*Question: What is a way that extension functions can be abused?*
+
+When you write extension functions, it's `public static final`, so you don't
+have access to private members
+
+=== Lambdas with receivers ===
+can also be defined inline
+If the last parameter of arguments is a lambda, you can put it outside the
+parentheses
+
+Lambdas with receivers, it has multiple parameters. And you give a parameter
+superpowers.
+
+You can take out `object.` because kotlin will know that the stuff inside is
+being called on `object`
+
+Can also abstract away "ceremony". Can use lambdas and lambdas w/ receivers to
+abstract that stuff away, e.g. `activate()...deactivate()`
+
+"Execute Around Method (EAM)" pattern
+java has "try-with-resources" construct?
+
+Kotlin has `use`
+
+=== Closures and Captures ===
+"A closure is the combination of a function and the lexical environment whithin
+which that function was declared."
+
+Environment -> the local scope where it was defined
+Closure -> function "closes over" those scoped values
+Scoped values that can be accessed by that function (even much later) are
+"captured"
+
+If you pass an outer variable into a lambda, the function is no longer a
+singleton, it rather has to be created (instantiated). This can add up.
+"Reaching out and grabbing a scoped value"
+
+Can reduce some of these penalties throug inlining
+Inline a function -> calls to that function replaced with body of that function
+(copy/pasted to where it's called)
+
+If you inline a function, you can `return`, because there's no ambiguity about
+where you are (the code is copy/pasted)
+
+You can use the `noinline` keyword to keep the compiler from copy/pasting
+*that* function in, so you can still assign
+
+`crossinline` is still confusing.
+
+=== Reified ===
+`reified` keyword lets the compiler know what the type is (because usually java
+erases the type at comipile time)
+"Hey compiler, can you change things around so that I can have the type
+information"
+
+=== Infix ===
+Can call one-parameter class method/fucntion without `.` or `()`
+Therefore, `to` is a function because of infix, when you do `mapOf(... to ...)`
+
+`infix fun assignedTo(foo: String)`
+
+
+== Contracts ==
+New in 1.3 (still experimental)
+
+A way for you tell the compiler how something behaves.
+
+
+https://github.com/queencodemonkey/dissecting-the-stdlib

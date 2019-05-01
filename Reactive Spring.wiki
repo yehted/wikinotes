@@ -1,0 +1,89 @@
+= Josh Long =
+= Reactive Spring =
+
+= GOTO Chicago Apr 29, 10:20 AM =
+
+== Links and Self Plug ==
+github.com/joshlong/reactive-revolution
+O'reilly cloud native java book
+reactivespringbook.io
+
+How do you serve 1000 requests at the same time?
+Threads not pragmatic.
+Pragmatic approach: Just scale out horizontally using microservices.
+
+How to do better? Find places in our code to do things more efficiently.
+For example? I/O tasks. I/O blocks threads.
+How can we build systems that don't wait for I/O?
+How about async I/O - provide a callback and get off that thread so that the
+thread can go do something else.
+** IF what you're doing is I/O bound **
+
+ == Reactive stream specification ==
+Project reactor, rxjava2, akka streams sit on top of this reactive stream
+specification
+
+spring initializer: start.spring.io
+Java 11
+Reactive web
+lombok
+devtools
+reactive mongodb <- NoSQL database
+RSocket
+
+Reactive code is more functional. Errors are handled the same way as data,
+unlike exceptions in Java. (onError)
+
+"Backpressure" is the new term for "Flow control". Allows consumer to tell the
+producer to slow down.
+
+Mono is the reactor concept of a Publisher that produces 0 or 1 values
+Flux is a Publisher that produces 0 to N values
+
+1. Create an entity
+2. Create a *ReactiveCrudRepository* <- it autogenerates all the CRUD methods
+   for you.
+3. Create *SampleDataInitializer* - has repository as private attribute. Use
+   "Flux.just()" to create a bunch of entities. Then ".map( name -> new
+   Entity(name)". Then flatMap to "repository.save(entity)". This is "saved"
+   repository.deleteAll().then(saved).subscribe()
+4. Create a @RestContoller, inject repository, create endpoint. <- By the way,
+   this is not SpringMVC, there are no servelets. This runs on netty.
+
+By default, one event loop per thread. Use subscribeOn(Scheduler) only if
+you're dealing with blocking I/O.
+** Question: Will this work with blocking relational databases? **
+
+By the way, the "Hide Banner" checkbox in intelliJ hides the ascii art.
+
+Also, you can use RouterFunctions instead of RestController that is more
+functional and you can programatticaly add endpoints.
+
+But what about SQL databases?
+Answer, up until now, has not been great. JDBC is blocking and synchronous.
+
+== R2DBC ==
+Supports: postgresql, mssql, spi, and 3rd party mysql for now
+it's not yet GA. Cautious -
+*Later this year should be GA*
+
+Autoconfigurations don't work yet. Have to manually configure.
+
+He was able to just swap out the database, and all the existing code still
+works, except Id is monotonically increasing integer.
+** Question: What are the most striking limitations or r2dbc right now? **
+
+HTTP only supports request/reply. Not fire and forget, not web sockets, not
+server sent events (well, it does, but text only), etc.
+
+Famously, google created gRPC to address some of these limitations of HTTP
+(uses protobuf). Async, but not reactive.
+
+Salesforce uses reactor + gRPC. *Facebook created RSocket that is natively
+reactive.* Payload agnostic. Has headers. Also uptime. but doesn't support
+routing. So have to do that manually
+
+Spring 5.2 has native support for RSocket.
+
+Showed a client that connects to RSocket server. Sent in binary.
+

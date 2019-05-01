@@ -1,0 +1,197 @@
+= Kotlin Server-side Coroutines =
+== Roman Elizarov ==
+== GOTO Chicago 2019 ==
+
+=== Old school client-server monolith ===
+clients -> executor threads -> DB
+number of threads = number of db connections. Easy to scale
+Simple, until
+
+=== Services ===
+now, services talk to other services. Talk to lots of lots of services. How do
+you configure the number of executor threads?
+
+Complex busniess logic:
+```fun placeOrder(order: Order): Response {
+loadAccount()
+loadMargin()
+validateOrder()
+etc...
+}```
+
+What happens when one of those services become slow?
+In the traditional architecture, the thread that calls the service gets
+blocked. And you can quickly end up with all your executor threads blocked
+because this one service is slow. Everything comes crashing down (cascading
+failure)
+
+Nowadays, code just waits.
+Solution: asynchronous code
+
+== Asynchronous Programming ==
+Instead of blocking, let's release the thread and do something else. When the
+service responds, find an open thread and deal with the response. But how?
+* Callbacks (function that will be called when it's ready)
+* --Futures/promises--/ Reactive
+* async/await
+* Kotlin coroutines
+
+KotlinConf (SF 2017) coroutines intro
+fresh async with kotlin (GOTO copenhagen 2018)
+
+== suspend behind the scenes ==
+Turns it into a function that takes a callback. But why callback and not
+future?
+
+=== Performance ===
+* _Future_ is a synchronization primitive - future always has a cost
+* _Callback_ is a lower-level primitive (futures are built on callbacks)
+* _Integration_ with async IO libraries easy (JVM libraries, e.g.)
+
+=== Integration at scale ===
+Blocking server
+```fun placeOrder(order: Order): Response {
+  // must return response
+  return response
+}```
+
+Async server
+```fun placeOrder(order: Order): Mono<Response> {
+  // must return response
+  return Mono.just(response)
+}```
+
+Server integrated with coroutines (frameworks coming soon)
+```suspend fun placeOrder(order: Order): Response {
+  // must return response
+  return response
+}```
+
+Server not integrated with coroutines
+```suspend fun placeOrder(order: Order): GlobalScope.mono {
+  // must return response
+  return@mono response
+}```
+
+*The server needs to support asynchrony in _some_ way*
+
+Everything else becomse simple - you can _write regular code_. All you need is
+*suspend*. You don't have to change the way you write code
+
+=== suspend is efficient ===
+suspend is one object allocated.
+with reactive, you have to allocate futures and lambdas
+
+in kotlin, tail calls are compiled efficiently.
+
+== Call stack with coroutines ==
+coroutine builder -> placeOrder -> actuallyPlaceOrder -> moreLogic ->
+margineService.loadMargin -> `suspendCoroutine` - continuation in heap
+
+This whole stack gets saved in heap, and your thread is free to do something
+else
+
+== Scaling with coroutines ==
+Thread pools:
+clients -> executor threads (N = number of CPU cores) -> service threads (M =
+depends)
+
+== What about IO bound (blocking) ==
+someone gives you a library that is blocking
+adding suspend doesn't help. it _enables_, but doesn't make it async. Unless
+you write code that actually is async, it doesn't anything.
+
+```suspend fun loadAccount(order: Order): Account =
+  withContext(dispatcher) {
+    // some blocking code here
+  }
+
+val dispatcher = Executors.newFixedThreadPool(M2).asCoroutineDispatcher()
+```
+
+You can isolate/allocate/encapsulate with a number of threads so you don't
+block the caller thread.
+
+
+=== CPU bound code ===
+same, use `withContext`
+create separate threadpool.
+
+*Fine grained control and encapsulation*
+Can make thread pool for async, for IO bound, for CPU bound. You have control
+and encapsulation
+
+Can't do this in Java, but easy in Kotlin.
+
+== Cancellation ==
+timeouts, e.g.
+`withTimeout(1000) { ... }`
+
+`suspendCancellableCoroutine { ... }`
+`.invokeOnCancellation { ... }`
+
+== Concurrency ==
+What if you wanted to call two services concurrently because there's no data
+dependency?
+
+Base
+```fun placeOrder(order: Order): Response {
+loadAccount(order)
+loadMargin(order)
+validateOrder()
+etc...
+}```
+
+Concurrency with async (futures)
+```fun placeOrder(order: Order): Response {
+  val account = loadAccountAsync(order)
+  val margin = loadMarginAsync(order)
+  return validateOrder(order, account.await(), margine.await())
+}```
+Leaks?
+
+Structured Concurrency
+```fun placeOrder(order: Order): Response {
+  coroutineScope {
+    val account = async { accountService.loadAccount(order) }
+    val margin = async { marginService.loadMargin(order) }
+    return validateOrder(order, account.await(), margin.await())
+  }
+}```
+If await fails, the coroutineScope is cancelled, and all the stuff inside. It
+waits for completion of all children
+
+== Enforcing structure ==
+Convention:
+`fun CoroutineScope.bg(params: Param) = launch { ... }`
+
+Use types as documentation
+if I see `suspend`, it is a function that may be slow or remote
+if I see `fun CoroutineScope.`, I know it has side effect in the background
+
+Types are enforced.
+
+== Alternative ways to async ==
+Green threads / fibers
+Fibers promise
+* develop just like threads
+* everything is effectively suspendable
+
+*Marking with _suspend_ pays off at scale*
+
+
+== Coroutines and data streams ==
+`suspend fun foo(params: Params): List<Response>`
+`suspend fun foo(params: Params): ???<Response>`
+
+*channel* is a primitive for coroutines
+Producer: `fun CoroutineScope.foo(): ReceiveChannel<Int> = produce { ... send() }`
+Consumer: consume normally `for (x in foo)`
+
+The catch?
+If you call this function, it will wait for completion of children.
+
+== Kotlin flows - similar to Channels, in preview only ==
+`flow` and `emit`
+
+Flows looks a lot like Flux

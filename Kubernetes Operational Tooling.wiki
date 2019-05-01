@@ -1,0 +1,82 @@
+= Kubernetes Operational Tooling =
+== Bridget Kromhout ==
+== GOTO Chicago 2019 ==
+== Tuesday Apr 30, 11:30 AM ==
+
+Containers don't solve all problems
+"Let's just containerize it" similar to "Let's just put it in the cloud"
+
+Only do it if it solves a problem you have
+
+"Kubernetes is an open-source platform designed to automate deploying, scaling,
+and operating application containers"
+
+- unified API surface
+- JSON-based API
+- often controlled with kubectl CLI
+
+Pod: a collection of containers colocated on a single machine (they run your
+application)
+Target realized having sidecars and keeping things compartmentalized and in
+different clusters is good.
+
+Service: a load balancer which can route traffic to a collection of pods
+
+Deployment: process of using a replica set to replicate a container multiple
+times for availability or scale
+
+All of the cloud providers have a managed kubernetes service. Simplify the
+deployment, management, and operations of Kubernetes. Allows you to focus on
+your containers not the infrastructure. Work how you want with open-source
+APIs. Scale and run applications with confidence.
+
+== Kubernetes Operability Toolin ==
+Auther has used them and thinks they are ok
+
+Terraform: deploy k8s clusters, pods, and services
+*Question: do you have experience with kops?*
+I guess kops is only AWS right now, and GCP in beta
+
+Helm: The package manager for Kubernetes. A package manager (like apt or yum).
+Use it on your applications or other applications to:
+- manage complexity (Charts can describe complex apps, provide repeatable
+  installs, and serve as a single point of authority)
+- simple sharing. Charts are easy to version, share, and host
+- rollbacks
+
+Draft: Simple app development and deployment - into any kubernetes cluster.
+Helm charts are so much yaml if you're only doing local dev. Will generate a
+dockerfile and Helm chart for you.
+
+Brigade: For ppl tired of yaml. Run scriptable, automated tasks in the cloud,
+as part of your k8s cluster. K8s is designed to be declarative, but if you need
+some dynamics, you can write some javascript in brigade to do stuff.
+
+Kashti: A Simple UI to display build results and logs. Visualizations and web
+dashboard to help inspect Brigade builds.
+
+BTW: Theres are all lightweight, open source. Helm and Brigade are CNCF
+projects.
+
+At Dockercon last fall, CNAB is a spec for packaging distributed apps. Cloud
+Native Application Bundle. Facilitate the bundling, installing, and managing of
+container-native apps - and their coupled services.
+
+Duffle
+
+porter: Useful if you get serious of using CNAB. A friendlier cloud installer.
+Install your app and its baggae. Can sign the packages if you have to install
+in closed/on-prem/secure location
+
+Open policy agent: policy-based control specified delcaratively and enforced
+automatically. Integrates as a sidecar, host-level daemon, or library. Update
+without recompiling or redeploying. Improve consistency, security, compliance.
+
+=== Helm 3 ===
+- deprecating tiller
+- libraries, schematized values, and ext dir in charts
+- lifecycle events
+- embedded lua engine for scripting event handlers (beta)
+- release and release version secret objects
+- new helm controller project for pull-based workflows
+http://helm.sh/blog
