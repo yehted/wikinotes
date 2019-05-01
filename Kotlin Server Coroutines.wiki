@@ -12,12 +12,14 @@ now, services talk to other services. Talk to lots of lots of services. How do
 you configure the number of executor threads?
 
 Complex busniess logic:
-```fun placeOrder(order: Order): Response {
-loadAccount()
-loadMargin()
-validateOrder()
-etc...
-}```
+{{{
+fun placeOrder(order: Order): Response {
+  loadAccount()
+  loadMargin()
+  validateOrder()
+  etc...
+}
+}}}
 
 What happens when one of those services become slow?
 In the traditional architecture, the thread that calls the service gets
@@ -50,28 +52,36 @@ future?
 
 === Integration at scale ===
 Blocking server
-```fun placeOrder(order: Order): Response {
+{{{
+fun placeOrder(order: Order): Response {
   // must return response
   return response
-}```
+}
+}}}
 
 Async server
-```fun placeOrder(order: Order): Mono<Response> {
+{{{
+fun placeOrder(order: Order): Mono<Response> {
   // must return response
   return Mono.just(response)
-}```
+}
+}}}
 
 Server integrated with coroutines (frameworks coming soon)
-```suspend fun placeOrder(order: Order): Response {
+{{{
+suspend fun placeOrder(order: Order): Response {
   // must return response
   return response
-}```
+}
+}}}
 
 Server not integrated with coroutines
-```suspend fun placeOrder(order: Order): GlobalScope.mono {
+{{{
+suspend fun placeOrder(order: Order): GlobalScope.mono {
   // must return response
   return@mono response
-}```
+}
+}}}
 
 *The server needs to support asynchrony in _some_ way*
 
@@ -101,13 +111,14 @@ someone gives you a library that is blocking
 adding suspend doesn't help. it _enables_, but doesn't make it async. Unless
 you write code that actually is async, it doesn't anything.
 
-```suspend fun loadAccount(order: Order): Account =
+{{{
+suspend fun loadAccount(order: Order): Account =
   withContext(dispatcher) {
     // some blocking code here
   }
 
 val dispatcher = Executors.newFixedThreadPool(M2).asCoroutineDispatcher()
-```
+}}}
 
 You can isolate/allocate/encapsulate with a number of threads so you don't
 block the caller thread.
@@ -135,29 +146,35 @@ What if you wanted to call two services concurrently because there's no data
 dependency?
 
 Base
-```fun placeOrder(order: Order): Response {
-loadAccount(order)
-loadMargin(order)
-validateOrder()
-etc...
-}```
+{{{
+fun placeOrder(order: Order): Response {
+  loadAccount(order)
+  loadMargin(order)
+  validateOrder()
+  etc...
+}
+}}}
 
 Concurrency with async (futures)
-```fun placeOrder(order: Order): Response {
+{{{
+fun placeOrder(order: Order): Response {
   val account = loadAccountAsync(order)
   val margin = loadMarginAsync(order)
   return validateOrder(order, account.await(), margine.await())
-}```
+}
+}}}
 Leaks?
 
 Structured Concurrency
-```fun placeOrder(order: Order): Response {
+{{{
+fun placeOrder(order: Order): Response {
   coroutineScope {
     val account = async { accountService.loadAccount(order) }
     val margin = async { marginService.loadMargin(order) }
     return validateOrder(order, account.await(), margin.await())
   }
-}```
+}
+}}}
 If await fails, the coroutineScope is cancelled, and all the stuff inside. It
 waits for completion of all children
 
