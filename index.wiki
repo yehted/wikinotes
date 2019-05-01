@@ -21,3 +21,5 @@
     * [[Serverless 2.0]]
     * [[Kubernetes Operational Tooling]]
     * [[Dissecting the stdlib]]
+    * [[Event Sourcing]]
+    * [[Kotlin Server Coroutines]]

@@ -1,0 +1,65 @@
+= Time in an Event Sourcing World =
+== Greg Young ==
+== GOTO Chicago 2019 ==
+
+In an event sourced model, you don't lose anything
+Usually only apply in core areas of business.
+
+In event sourcing, what we store are the events. I don't store what the cart
+looks like, I store what occurred to the cart.
+
+Advantage: multiple views coming off the same events
+
+Advantage: Linearization. You know exactly when things happened in relation to
+other things (Guaranteed ordering)
+
+But what happens if you have out-of-order data?
+For example, writing/cashing checks.
+Err towards eventual consistency in favor of availability
+
+When you use a check, there are 3 major times associated.
+1. Time that you write the check
+2. The time that you write on the date line (you cannot deposit *until* this
+   date). It is a transaction that *will* occur, not one that it *has* occurred.
+3. The time that you receive it
+4. The time that you deposit it
+5. The time that the check cleared
+6. etc...
+
+Are all these important?
+Yes, because I want to know the progression of the thing is, not the final
+state.
+Once you model things as a series of events, there's a lot of cool things you
+can do with reporting.
+
+But another cool thing is TIME. Now I have timestamps associated with
+everythign that occured.
+
+_Temporal modeling_
+How do subscriers know when the check clears? It can get really complicated.
+Now the subscriber has to know about all these different kinds of stuff. Time
+becomes a bit of a problem.
+
+Eventually we'll need to have a state that is "CLEARED".
+WORM drive (write once, read many) - auditors would love that
+
+For example, if the date that you expect the check to clear changes,
+you have a new kind of event, ClearanceExpectationChanged
+
+In 99% of event sourcing, time is *right now*. But sometimes it doesn't work
+like this and event sourcing is a really valuable model.
+
+What about post-dated checks?
+What if the check never clears? - You'd want to be able to detect this kind of
+thing. E.g. if it's been 5 days, please let someone know.
+In this case, send yourself a message in the future to say, "if this thing
+hasn't happened, do this other thing, like escalate"
+
+*Event Sourcing represents linear time*
+Always append, never mutate things in the past
+
+What about Occasionally Connected Systems?
+For example, scanning boxes in a warehouse with spotty Wifi
+git is another example. Want to track both when it was committed *and* when it
+became visible (pushed)
+Geographic distribution is another common case. Coordination has costs
